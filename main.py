@@ -46,17 +46,31 @@ def hash_fn(s: str) -> int:
 
 # Return the number of bins in 'ht'.
 def hash_size(ht: HashTable) -> int:
-    pass
+    return ht.bins
+
 # Return the number of elements (key-value pairs) in 'ht'.
 def hash_count(ht: HashTable) -> int:
-    pass
+    return ht.count
+
+    
 # Return whether 'ht' contains a mapping for the given 'word'.
 def has_key(ht: HashTable, word: str) -> bool:
-    pass
+    index = hash_fn(word) % ht.bins
+    current = ht.table[index]
+    while current is not None:
+        if current.value.key == word:
+            return True
+        current = current.next
+    return False
+
 # Return the line numbers associated with the key 'word' in 'ht'.
 # The returned list should not contain duplicates, but need not be sorted.
 def lookup(ht: HashTable, word: str) -> List[int]:
-    pass
+    
+
+
+
+
 # Record in 'ht' that 'word' has an occurrence on line 'line'.
 def add(ht: HashTable, word: str, line: int) -> None:
     pass
