@@ -30,6 +30,11 @@ class HashTableNode:
     count: int
     table: List[WordLinesList]
 
+# Make a fresh hash table with the given number of bins 'size', 128
+# containing no elements.
+def make_hash(size: int) -> HashTable:
+    ht : HashTable = HashTableNode(size, 0, [None] * size)
+    return ht
 
 # Return the hash code of 's' (see assignment description).
 def hash_fn(s: str) -> int:
@@ -39,12 +44,6 @@ def hash_fn(s: str) -> int:
     else:
         return (ord(s[0]) + 31 * hash_fn(s[1:])) % (2**32)
 
-
-
-# Make a fresh hash table with the given number of bins 'size',
-# containing no elements.
-def make_hash(size: int) -> HashTable:
-    pass
 # Return the number of bins in 'ht'.
 def hash_size(ht: HashTable) -> int:
     pass
@@ -71,8 +70,7 @@ def hash_keys(ht: HashTable) -> List[str]:
 def make_concordance(stop_words: HashTable, lines: List[str]) -> HashTable:
     pass
 # Given an input file path, a stop-words file path, and an output file path,
-# overwrite the indicated output file with a sorted concordance of the input
-file.
+# overwrite the indicated output file with a sorted concordance of the input file
 def full_concordance(in_file: str, stop_words_file: str, out_file: str) -> None:
     pass
 
