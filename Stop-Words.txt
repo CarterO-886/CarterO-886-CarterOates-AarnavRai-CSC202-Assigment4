@@ -1,6 +1,8 @@
 a
 about
 be
+because
+before
 by
 can
 do
@@ -8,9 +10,14 @@ i
 in
 is
 it
+know
+knew
 of
 on
 the
 this
+that
 to
 was
+why
+what
