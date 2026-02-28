@@ -219,6 +219,67 @@ class Tests(unittest.TestCase):
             keys = hash_keys(ht)
             self.assertEqual(set(keys), {"apple", "banana", "cherry"})
 
+        def test_make_concordance(self):
+            stop_words = make_hash(128)
+            add(stop_words, "the", 0)
+            add(stop_words, "and", 0)
+            add(stop_words, "is", 0)
+
+            lines = [
+                "The cat is on the roof.",
+                "And the dog is in the yard.",
+                "Is the cat happy?"
+            ]
+            print (lines)
+            concordance = make_concordance(stop_words, lines)
+
+            self.assertTrue(has_key(concordance, "cat"))
+            self.assertTrue(has_key(concordance, "roof"))
+            self.assertTrue(has_key(concordance, "dog"))
+            self.assertTrue(has_key(concordance, "yard"))
+            self.assertTrue(has_key(concordance, "happy"))
+
+            self.assertEqual(set(lookup(concordance, "cat")), {1, 3})
+            self.assertEqual(set(lookup(concordance, "roof")), {1})
+            self.assertEqual(set(lookup(concordance, "dog")), {2})
+            self.assertEqual(set(lookup(concordance, "yard")), {2})
+            self.assertEqual(set(lookup(concordance, "happy")), {3})
+        
+        def test_full_concordance(self):
+            in_file = "test_input.txt"
+            stop_words_file = "test_stop_words.txt"
+            out_file = "test_output.txt"
+
+            with open(stop_words_file, 'w') as f:
+                f.write("the\nand\nis\n")
+
+            with open(in_file, 'w') as f:
+                f.write("The cat is on the roof.\n")
+                f.write("And the dog is in the yard.\n")
+                f.write("Is the cat happy?\n")
+
+            full_concordance(in_file, stop_words_file, out_file)
+
+            with open(out_file, 'r') as f:
+                output = f.read()
+
+            expected_output = (
+                "cat: 1, 3\n"
+                "dog: 2\n"
+                "happy: 3\n"
+                "roof: 1\n"
+                "yard: 2\n"
+            )
+
+            self.assertEqual(output, expected_output)
+
 
 if (__name__ == '__main__'):
-    unittest.main()
+    # When run with three command-line arguments, generate a concordance file:
+    #     python main.py <input> <stop-words> <output>
+    # Otherwise fall back to running the unit tests.
+    if len(sys.argv) == 4:
+        in_file, stop_file, out_file = sys.argv[1], sys.argv[2], sys.argv[3]
+        full_concordance(in_file, stop_file, out_file) # run and gen output file
+    else:
+        unittest.main()
