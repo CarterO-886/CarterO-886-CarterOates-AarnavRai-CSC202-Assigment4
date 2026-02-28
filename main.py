@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import *
 from dataclasses import dataclass
 import unittest
@@ -6,8 +7,8 @@ import string
 
 sys.setrecursionlimit(10**6)
 
-# Type aliases
-IntList: TypeAlias = Union["Node", None]
+
+
 
 
 # IntList node: frozen (immutable) as it simply holds an integer and next pointer
@@ -17,22 +18,21 @@ class Node:
     next: IntList
 
 
+IntList: TypeAlias = Optional[Node]
+
+@dataclass(frozen=True)
+class WordLinesNode:
+    value: 'WordLines'
+    next: Optional['WordLinesNode']
+
+
 @dataclass
 class WordLines:
     key: str
     times: IntList  # mutable IntList storing line numbers (unique)
 
 
-WordLinesList: TypeAlias = Union["WordLinesNode", None]
-
-
-@dataclass(frozen=True)
-class WordLinesNode:
-    value: WordLines
-    next: WordLinesList
-
-
-HashTable: TypeAlias = Union["HashTableNode", None]
+WordLinesList: TypeAlias = Optional[WordLinesNode]
 
 
 @dataclass
@@ -40,6 +40,9 @@ class HashTableNode:
     bins: int
     count: int
     table: List[WordLinesList]
+
+
+HashTable: TypeAlias = Optional[HashTableNode]
 
 
 # Return the hash code of 's' (Horner's method described in assignment)
@@ -51,10 +54,10 @@ def hash_fn(s: str) -> int:
 
 
 # Make a fresh hash table with the given number of bins 'size'
-def make_hash(size: int) -> HashTable:
+def make_hash(size: int) -> HashTableNode:
     if size <= 0:
         size = 128
-    ht: HashTable = HashTableNode(size, 0, [None] * size)
+    ht = HashTableNode(size, 0, [None] * size)
     return ht
 
 
@@ -176,7 +179,7 @@ DEFAULT_STOP_WORDS = {
 # Given a hash table 'stop_words' containing stop words as keys, plus
 # a sequence of strings 'lines' representing the lines of a document,
 # return a hash table representing a concordance of that document.
-def make_concordance(stop_words: HashTable, lines: List[str]) -> HashTable:
+def make_concordance(stop_words: HashTable, lines: List[str]) -> HashTableNode:
     concordance = make_hash(128)
     for line_number, line in enumerate(lines, start=1):
         line_proc = line.replace("'", "")
@@ -216,9 +219,7 @@ def full_concordance(in_file: str, stop_words_file: str, out_file: str) -> None:
             f.write(f"{key}: {line_numbers_str}\n")
 
 
-# ---------------------------
-# Unit tests
-# ---------------------------
+
 class Tests(unittest.TestCase):
     def test_make_hash(self):
         ht = make_hash(128)
@@ -248,11 +249,12 @@ class Tests(unittest.TestCase):
         keys = hash_keys(ht)
         self.assertEqual(set(keys), {"apple", "banana", "cherry"})
 
-    def test_make_concordance_basic(self):
+    def test_make_concordance(self):
         stop_ht = make_hash(128)
         add(stop_ht, "a", 0)
         add(stop_ht, "the", 0)
-        lines = ["This is a sample.", "The sample is real.", ""]
+        lines = ["This is a sample.", 
+                 "The sample is real.", ""]
         concord = make_concordance(stop_ht, lines)
         # 'sample' occurs on lines 1 and 2
         self.assertEqual(set(lookup(concord, "sample")), {1, 2})
